@@ -127,7 +127,7 @@ export default function DashboardPage() {
             <p className="text-xs text-gray-500 pt-1">
               {rewardsAvailable > 0 
                 ? `¡Ya has acumulado ${rewardsAvailable} pedidos gratis!` 
-                : `¡Cada ${nextReward} puntos obtienes un pedido gratis!`}
+                : `¡Cada ${nextReward} puntos obtienes un domicilio gratis!`}
             </p>
           </div>
         </div>
@@ -178,7 +178,7 @@ export default function DashboardPage() {
                 className="flex items-center justify-center space-x-3 bg-indigo-600 text-white py-4 rounded-2xl font-bold hover:bg-indigo-700 transition-colors"
               >
                 <Phone size={24} />
-                <span>Llamada Telefónica</span>
+                <span>Llamada</span>
               </button>
             </div>
           </div>
