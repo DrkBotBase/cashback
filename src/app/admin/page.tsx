@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Search, Plus, User as UserIcon, LogOut, Gift } from "lucide-react";
+import { Search, Plus, User as UserIcon, LogOut, Gift, MessageCircle, Share2 } from "lucide-react";
 
 export default function AdminPage() {
   const { data: session, status } = useSession();
@@ -17,6 +17,8 @@ export default function AdminPage() {
   const [showSettings, setShowSettings] = useState(false);
   const [loading, setLoading] = useState(false);
   const [updating, setUpdating] = useState<string | null>(null);
+  const [appUrl, setAppUrl] = useState<string>("");
+  const [shareWhatsApp, setShareWhatsApp] = useState("");
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -44,6 +46,7 @@ export default function AdminPage() {
           const data = await settingsRes.json();
           setRewardPoints(data.value);
           setNewRewardPoints(data.value.toString());
+          setAppUrl(data.appUrl || "");
         }
       } catch (error) {
         console.error("Error fetching initial data:", error);
@@ -124,6 +127,15 @@ export default function AdminPage() {
     }
   };
 
+  const handleShareApp = () => {
+    if (!shareWhatsApp) {
+      alert("Por favor ingresa un número de WhatsApp");
+      return;
+    }
+    const message = `¡Hola! 👋 Te invito a usar nuestra App para acumular puntos y ganar pedidos gratis. Regístrate aquí: ${appUrl}`;
+    window.open(`https://api.whatsapp.com/send?phone=57${shareWhatsApp}&text=${encodeURIComponent(message)}`, '_blank');
+  };
+
   if (status === "loading") {
     return <div className="flex justify-center items-center h-screen text-lg">Cargando...</div>;
   }
@@ -182,17 +194,43 @@ export default function AdminPage() {
           </div>
         )}
 
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-green-100 space-y-4">
+          <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wide flex items-center">
+            <Share2 size={18} className="mr-2 text-green-600" />
+            Compartir App con Cliente Nuevo
+          </h3>
+          <div className="flex space-x-2">
+            <div className="relative flex-1">
+              <input
+                type="tel"
+                placeholder="WhatsApp del cliente..."
+                value={shareWhatsApp}
+                onChange={(e) => setShareWhatsApp(e.target.value.replace(/\s+/g, ""))}
+                className="w-full px-2 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm text-gray-900"
+              />
+            </div>
+            <button
+              onClick={handleShareApp}
+              className="bg-green-500 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-green-600 transition-colors flex items-center space-x-2"
+            >
+              <MessageCircle size={18} />
+              <span>Enviar</span>
+            </button>
+          </div>
+        </div>
+
         <div className="relative">
           <input
-            type="text"
+            type="tel"
             placeholder="Buscar por WhatsApp..."
             value={searchTerm}
             onChange={(e) => {
-              setSearchTerm(e.target.value);
-              if (!e.target.value) setUsers([]);
+              const val = e.target.value.replace(/\s+/g, "");
+              setSearchTerm(val);
+              if (!val) setUsers([]);
             }}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none shadow-sm transition-all"
+            className="w-full pl-10 pr-2 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none shadow-sm transition-all text-gray-900"
           />
           <Search className="absolute left-3 top-3.5 text-gray-400" size={20} />
           <button

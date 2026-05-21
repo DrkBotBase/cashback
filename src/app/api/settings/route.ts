@@ -14,7 +14,10 @@ export async function GET() {
       rewardPoints = await Settings.create({ key: "reward_points", value: 10 });
     }
 
-    return NextResponse.json({ value: rewardPoints.value });
+    return NextResponse.json({ 
+      value: rewardPoints.value,
+      appUrl: process.env.NEXTAUTH_URL || ""
+    });
   } catch (error: any) {
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
